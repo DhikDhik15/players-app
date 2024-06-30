@@ -20,3 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('player', UsersController::class);
+Route::get('/team/process', [UsersController::class,'process'])->name('process');

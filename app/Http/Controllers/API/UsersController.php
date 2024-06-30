@@ -4,8 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\ProcessResource;
 use App\Http\Resources\ListUserResource;
 
 class UsersController extends Controller
@@ -22,14 +24,19 @@ class UsersController extends Controller
         return new ListUserResource($users);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function process(Request $request)
     {
+        $results=[];
+        foreach ($request->all() as $key => $value) {
+            $results[]= DB::table('users')
+            ->leftJoin('skills', 'skills.user_id', '=', 'users.id')
+            ->select('users.id', 'users.name', 'users.position', 'skills.skill','skills.value')
+                ->where('users.position','=', $value['position'])
+                ->where('skills.skill','=', $value['mainSkill'])
+                ->get();
+        }
 
+        return new ProcessResource($results);
     }
 
     /**
