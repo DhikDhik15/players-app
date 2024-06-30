@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class ListUserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,12 +14,19 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'position' => $this->position,
-            'playerSkills' => $this->skills($this->skills)
-        ];
+        $result=[];
+        foreach ($this as $key => $values) {
+            foreach ($values as $k => $user) {
+                $result[] = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'position' => $user->position,
+                    'playerSkills' => $this->skills($user->skills)
+                ];
+            }
+        };
+
+        return $result;
     }
 
     private function skills($skills)
@@ -28,7 +35,8 @@ class UserResource extends JsonResource
         foreach($skills as $skill) {
             $result[]=[
                 'skills' => $skill->skill,
-                'values' => $skill->value
+                'values' => $skill->value,
+                'playerId' => $skill->user_id
             ];
         }
         return $result;

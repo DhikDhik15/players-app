@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\ListUserResource;
 
 class UsersController extends Controller
 {
@@ -16,7 +17,9 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::orderBy('id')->get();
+
+        return new ListUserResource($users);
     }
 
     /**
@@ -48,28 +51,6 @@ class UsersController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -78,7 +59,16 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $find = User::find($id);
+        $find->update([
+            'name' => $request->name,
+            'position' => $request->position
+        ]);
+
+        $find->skills()->delete();
+        $find->skills()->createMany($request['playerSkills']);
+
+        return new UserResource($find);
     }
 
     /**
