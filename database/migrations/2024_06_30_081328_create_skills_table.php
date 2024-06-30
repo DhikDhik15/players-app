@@ -15,7 +15,8 @@ class CreateSkillsTable extends Migration
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->string('skill_name')->nullable();
+            $table->unsignedInteger('user_id')->nullable();
+            $table->string('skill')->nullable();
             $table->tinyInteger('value')->nullable();
             $table->timestamps();
             $table->softDeletes();
