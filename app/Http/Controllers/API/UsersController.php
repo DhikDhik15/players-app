@@ -86,6 +86,9 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $player = User::find($id);
+        $player->delete();
+
+        return response($this->index());
     }
 }
